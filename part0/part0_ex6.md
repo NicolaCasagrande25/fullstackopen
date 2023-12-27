@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant browser
     participant server
@@ -9,3 +10,4 @@ sequenceDiagram
     Note right of server: The server executes the Javascript code to add the new note to the notes array
     server-->>browser: {"message":"note created"}
     deactivate server
+```
