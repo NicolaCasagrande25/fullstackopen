@@ -25,12 +25,30 @@ const App = () => {
     setVotes(copy)
   }
 
+  function findAnecdoteWithMostVotes(){
+    let maxVotes = 0 
+    let index
+
+    for(let i = 0; i < votes.length; i++){
+      if(votes[i] > maxVotes){
+        maxVotes = votes[i]
+        index = i
+      }
+    }
+
+    return anecdotes[index]
+  }
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
       <p>has {votes[selected]} votes</p>
       <button onClick={increaseVotes}>vote</button>
       <button onClick={selectRandomAnecdote}>next anecdote</button>
+
+      <h1>Anecdote with most votes</h1>
+      <p>{findAnecdoteWithMostVotes()}</p>
     </div>
   )
 }
