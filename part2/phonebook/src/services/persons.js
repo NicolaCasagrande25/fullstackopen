@@ -11,8 +11,13 @@ const create = newObject => {
     return request.then(response => response.data);
 };
 
+const updateNumber = (id, updatedPerson) => {
+    const request = axios.put(`${baseUrl}/${id}`, updatedPerson);
+    return request.then(response => response.data);
+}
+
 const deletePerson = id => {
     return axios.delete(`${baseUrl}/${id}`);
 };
 
-export default { getAll, create, deletePerson };
+export default { getAll, create, deletePerson, updateNumber };

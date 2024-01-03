@@ -32,11 +32,35 @@ const App = () => {
     setSearchQuery(event.target.value);
   };
 
+  const updatePerson = (person) => {
+    if (
+      window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`
+      )
+    ) {
+      const updatedPerson = { ...person, number: newNumber };
+      personService
+        .updateNumber(person.id, updatedPerson)
+        .then((returnedPerson) =>
+          setPersons(
+            persons.map((p) =>
+              p.id !== person.id ? p : returnedPerson
+            )
+          )
+        );
+      setNewName("");
+      setNewNumber("");
+    }
+  };
+
   const addNewPerson = (event) => {
     event.preventDefault();
+    const foundPersonWithSameName = persons.find(
+      (person) => person.name === newName
+    );
 
-    if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+    if (foundPersonWithSameName) {
+      updatePerson(foundPersonWithSameName);
     } else {
       const newPerson = {
         name: newName,
@@ -45,16 +69,16 @@ const App = () => {
       personService
         .create(newPerson)
         .then((returnedPerson) => setPersons(persons.concat(returnedPerson)));
+      setNewName("");
+      setNewNumber("");
     }
-    setNewName("");
-    setNewNumber("");
   };
 
-  const deletePerson = id => {
+  const deletePerson = (id) => {
     const person = persons.find((person) => person.id === id);
     if (window.confirm(`Delete ${person.name}?`)) {
       personService.deletePerson(id).then(() => {
-        setPersons(persons.filter(person => person.id !== id));
+        setPersons(persons.filter((person) => person.id !== id));
       });
     }
   };
@@ -75,9 +99,9 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       ></PersonForm>
       <h2>Numbers</h2>
-      <Persons 
-      personsToShow={personsToShow}
-      deletePerson={deletePerson}
+      <Persons
+        personsToShow={personsToShow}
+        deletePerson={deletePerson}
       ></Persons>
     </div>
   );
