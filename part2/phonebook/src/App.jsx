@@ -11,9 +11,7 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    personService
-    .getAll()
-    .then(initialPersons => {
+    personService.getAll().then((initialPersons) => {
       setPersons(initialPersons);
     });
   }, []);
@@ -46,12 +44,19 @@ const App = () => {
       };
       personService
         .create(newPerson)
-        .then(returnedPerson => 
-          setPersons(persons.concat(returnedPerson))
-        );
+        .then((returnedPerson) => setPersons(persons.concat(returnedPerson)));
     }
     setNewName("");
     setNewNumber("");
+  };
+
+  const deletePerson = id => {
+    const person = persons.find((person) => person.id === id);
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService.deletePerson(id).then(() => {
+        setPersons(persons.filter(person => person.id !== id));
+      });
+    }
   };
 
   return (
@@ -70,7 +75,10 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       ></PersonForm>
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}></Persons>
+      <Persons 
+      personsToShow={personsToShow}
+      deletePerson={deletePerson}
+      ></Persons>
     </div>
   );
 };
