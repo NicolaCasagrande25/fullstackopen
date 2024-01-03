@@ -8,4 +8,4 @@ const Persons = ({ personsToShow }) => (
   </>
 );
 
-export default Persons
+export default Persons;
