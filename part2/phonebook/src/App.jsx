@@ -10,7 +10,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
@@ -47,10 +48,21 @@ const App = () => {
           setPersons(
             persons.map((p) => (p.id !== person.id ? p : returnedPerson))
           );
-          setSuccessMessage(`Updated phone number for ${returnedPerson.name}`);
+          setMessage(`Updated phone number for ${returnedPerson.name}`);
           setTimeout(() => {
-            setSuccessMessage(null);
+            setMessage(null);
           }, 5000);
+        })
+        .catch((error) => {
+          setMessage(
+            `Information of ${person.name} has already been removed from server`
+          );
+          setIsError(true);
+          setTimeout(() => {
+            setMessage(null);
+            setIsError(false);
+          }, 5000);
+          setPersons(persons.filter((p) => p.id !== person.id));
         });
       setNewName("");
       setNewNumber("");
@@ -72,9 +84,9 @@ const App = () => {
       };
       personService.create(newPerson).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
-        setSuccessMessage(`Added ${returnedPerson.name}`);
+        setMessage(`Added ${returnedPerson.name}`);
         setTimeout(() => {
-          setSuccessMessage(null);
+          setMessage(null);
         }, 5000);
       });
       setNewName("");
@@ -94,7 +106,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage}></Notification>
+      <Notification message={message} isError={isError}></Notification>
       <Filter
         searchQuery={searchQuery}
         handleSearchQueryChange={handleSearchQueryChange}
