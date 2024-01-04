@@ -3,12 +3,14 @@ import personService from "./services/persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
@@ -40,14 +42,16 @@ const App = () => {
     ) {
       const updatedPerson = { ...person, number: newNumber };
       personService
-        .updateNumber(person.id, updatedPerson)
-        .then((returnedPerson) =>
+        .update(person.id, updatedPerson)
+        .then((returnedPerson) => {
           setPersons(
-            persons.map((p) =>
-              p.id !== person.id ? p : returnedPerson
-            )
-          )
-        );
+            persons.map((p) => (p.id !== person.id ? p : returnedPerson))
+          );
+          setSuccessMessage(`Updated phone number for ${returnedPerson.name}`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
+        });
       setNewName("");
       setNewNumber("");
     }
@@ -66,9 +70,13 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      personService
-        .create(newPerson)
-        .then((returnedPerson) => setPersons(persons.concat(returnedPerson)));
+      personService.create(newPerson).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setSuccessMessage(`Added ${returnedPerson.name}`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
+      });
       setNewName("");
       setNewNumber("");
     }
@@ -86,6 +94,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage}></Notification>
       <Filter
         searchQuery={searchQuery}
         handleSearchQueryChange={handleSearchQueryChange}
