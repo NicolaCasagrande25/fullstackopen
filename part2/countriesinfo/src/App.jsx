@@ -1,26 +1,30 @@
 import { useState, useEffect } from "react";
 import SearchBar from "./components/SearchBar";
-import CountriesList from "./components/CountriesList";
+import CountriesInfo from "./components/CountriesInfo";
 import countriesService from "./services/countries";
 
 const App = () => {
-  const [countries, setCountries] = useState(null);
-  const [countryData, setCountryData] = useState(null);
+  const [countries, setCountries] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoadingCountries, setIsLoadingCountries] = useState(true);
 
   useEffect(() => {
-    countriesService.getAll().then((countries) => {
-      setCountries(countries);
-    });
+    const fetchCountries = async () => {
+      setIsLoadingCountries(true);
+      await countriesService.getAll().then((countries) => {
+        setCountries(countries);
+      });
+      setIsLoadingCountries(false);
+    };
+
+    fetchCountries();
   }, []);
 
-  const getSpecificCountryData = (country) => {
-    countriesService.getCountryData(country.name.common).then((countryData) => {
-      setCountryData(countryData);
-    });
-  };
-
   if (!countries) {
+    return <div>An error occured while retrieving the countries.</div>;
+  }
+
+  if (isLoadingCountries) {
     return <div>Loading...</div>;
   }
 
@@ -30,9 +34,6 @@ const App = () => {
 
   const handleSearchQueryChange = (event) => {
     setSearchQuery(event.target.value);
-    if (countriesToShow.length != 1) {
-      setCountryData(null);
-    }
   };
 
   return (
@@ -41,11 +42,7 @@ const App = () => {
         searchQuery={searchQuery}
         handleSearchQueryChange={handleSearchQueryChange}
       />
-      <CountriesList
-        countries={countriesToShow}
-        countryData={countryData}
-        getSpecificCountryData={getSpecificCountryData}
-      ></CountriesList>
+      <CountriesInfo countries={countriesToShow}></CountriesInfo>
     </div>
   );
 };
