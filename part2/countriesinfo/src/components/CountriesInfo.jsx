@@ -1,11 +1,19 @@
 import { useState, useEffect } from "react";
 import SpecificCountryData from "./SpecifcCountryData";
 import countriesService from "../services/countries";
+import weatherService from "../services/weather";
 
 const CountriesInfo = ({ countries }) => {
   const [countryData, setCountryData] = useState(null);
+  const [weatherInfo, setWeatherInfo] = useState(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [showCountryData, setShowCountryData] = useState(false);
+
+  const getWeatherInfo = async (capital) => {
+    await weatherService.getCityWeather(capital).then((weatherInfo) => {
+      setWeatherInfo(weatherInfo);
+    });
+  };
 
   const getSpecificCountryData = async (country) => {
     setIsLoadingData(true);
@@ -14,18 +22,19 @@ const CountriesInfo = ({ countries }) => {
       .then((countryData) => {
         setCountryData(countryData);
       });
+    await getWeatherInfo(country.capital[0]);
     setIsLoadingData(false);
     setShowCountryData(true);
   };
 
   useEffect(() => {
     if (countries.length === 1) {
-      if(!countryData){
+      if (!countryData) {
         getSpecificCountryData(countries[0]);
       }
-    }
-    else {
+    } else {
       setCountryData(null);
+      setWeatherInfo(null);
       setShowCountryData(false);
     }
   }, [countries]);
@@ -35,7 +44,12 @@ const CountriesInfo = ({ countries }) => {
   }
 
   if (showCountryData) {
-    return SpecificCountryData({ countryData });
+    return (
+      <SpecificCountryData
+        countryData={countryData}
+        weatherInfo={weatherInfo}
+      ></SpecificCountryData>
+    );
   } else if (countries.length > 10) {
     return <div>Too many matches, specify another filter</div>;
   } else if (countries.length > 1) {

@@ -1,4 +1,6 @@
-const SpecificCountryData = ({ countryData }) => {
+import Weather from "./Weather";
+
+const SpecificCountryData = ({ countryData, weatherInfo }) => {
   if (!countryData) {
     return <div>An error occured while getting the data of this country.</div>;
   }
@@ -24,6 +26,10 @@ const SpecificCountryData = ({ countryData }) => {
         src={countryData.flags.png}
         alt={countryData.flags.alt}
         width="250"
+      />
+      <Weather
+        capital={countryData.capital[0] ?? weatherInfo.name}
+        weatherInfo={weatherInfo}
       />
     </div>
   );
