@@ -54,7 +54,7 @@ const App = () => {
           }, 5000);
         })
         .catch((error) => {
-          if (error.name === "ValidarionError") {
+          if (error.response.status === 400) {
             setMessage(error.response.data.error);
             setIsError(true);
             setTimeout(() => {
