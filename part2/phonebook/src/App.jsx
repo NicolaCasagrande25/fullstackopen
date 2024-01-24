@@ -54,15 +54,24 @@ const App = () => {
           }, 5000);
         })
         .catch((error) => {
-          setMessage(
-            `Information of ${person.name} has already been removed from server`
-          );
-          setIsError(true);
-          setTimeout(() => {
-            setMessage(null);
-            setIsError(false);
-          }, 5000);
-          setPersons(persons.filter((p) => p.id !== person.id));
+          if (error.name === "ValidarionError") {
+            setMessage(error.response.data.error);
+            setIsError(true);
+            setTimeout(() => {
+              setMessage(null);
+              setIsError(false);
+            }, 5000);
+          } else {
+            setMessage(
+              `Information of ${person.name} has already been removed from server`
+            );
+            setIsError(true);
+            setTimeout(() => {
+              setMessage(null);
+              setIsError(false);
+            }, 5000);
+            setPersons(persons.filter((p) => p.id !== person.id));
+          }
         });
       setNewName("");
       setNewNumber("");
@@ -82,13 +91,23 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      personService.create(newPerson).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-        setMessage(`Added ${returnedPerson.name}`);
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
-      });
+      personService
+        .create(newPerson)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setMessage(`Added ${returnedPerson.name}`);
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setIsError(true);
+          setTimeout(() => {
+            setMessage(null);
+            setIsError(false);
+          }, 5000);
+        });
       setNewName("");
       setNewNumber("");
     }
