@@ -30,25 +30,6 @@ const favoriteBlog = (blogs) => {
     }
 }
 
-// const mostBlogs = (blogs) => {
-//     const authorsWithBlogsNumber = [];
-
-//     const reducer = (mostBlogs, author) => {
-//         return mostBlogs.blogs > author.blogs ? mostBlogs : author
-//     }
-
-//     blogs.forEach(blog => {
-//         let author = authorsWithBlogsNumber.find(a => a.author === blog.author)
-//         if (author) {
-//             author.blogs += 1
-//         } else {
-//             authorsWithBlogsNumber.push({ author: blog.author, blogs: 1 })
-//         }
-//     })
-
-//     return authorsWithBlogsNumber.length > 0 ? authorsWithBlogsNumber.reduce(reducer, authorsWithBlogsNumber[0]) : undefined
-// }
-
 const mostBlogs = (blogs) => {
     if (blogs.length === 0) {
         return undefined
@@ -66,9 +47,27 @@ const mostBlogs = (blogs) => {
     }, { author: '', blogs: 0 })
 }
 
+const mostLikes = (blogs) => {
+    if (blogs.length === 0) {
+        return undefined
+    }
+
+    const likesPerAuthorReducer = (likesPerAuthorCounter, blog) => {
+        likesPerAuthorCounter[blog.author] = (likesPerAuthorCounter[blog.author] || 0) + blog.likes
+        return likesPerAuthorCounter
+    }
+
+    const likesPerAuthor = blogs.reduce(likesPerAuthorReducer, {})
+
+    return Object.entries(likesPerAuthor).reduce((authorWithMostLikes, [author, likes]) => {
+        return authorWithMostLikes.likes > likes ? authorWithMostLikes : { author: author, likes: likes }
+    }, { author: '', likes: 0 })
+}
+
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }

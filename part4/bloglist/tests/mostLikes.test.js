@@ -1,6 +1,6 @@
-const mostBlogs = require('../utils/list_helper').mostBlogs
+const mostLikes = require('../utils/list_helper').mostLikes
 
-describe('most blogs', () => {
+describe('most likes', () => {
     const listWithOneBlog = [
         {
             _id: '5a422aa71b54a676234d17f8',
@@ -63,21 +63,21 @@ describe('most blogs', () => {
 
     const solutionOneBlog = {
         author: 'Edsger W. Dijkstra',
-        blogs: 1
+        likes: 5
     }
 
     const solution = {
-        author: "Robert C. Martin",
-        blogs: 3
+        author: 'Edsger W. Dijkstra',
+        likes: 17
     }
 
     test('of empty list is undefined', () => {
-        expect(mostBlogs([])).toBe(undefined)
+        expect(mostLikes([])).toBe(undefined)
     }),
         test('when list has only one blog equals to the author of that blog', () => {
-            expect(mostBlogs(listWithOneBlog)).toEqual(solutionOneBlog)
+            expect(mostLikes(listWithOneBlog)).toEqual(solutionOneBlog)
         }),
         test('of a bigger list is calculated right', () => {
-            expect(mostBlogs(blogs)).toEqual(solution)
+            expect(mostLikes(blogs)).toEqual(solution)
         })
 })
