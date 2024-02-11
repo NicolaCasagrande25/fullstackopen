@@ -72,12 +72,12 @@ describe('most likes', () => {
     }
 
     test('of empty list is undefined', () => {
-        expect(mostLikes([])).toBe(undefined)
-    }),
-        test('when list has only one blog equals to the author of that blog', () => {
-            expect(mostLikes(listWithOneBlog)).toEqual(solutionOneBlog)
-        }),
-        test('of a bigger list is calculated right', () => {
-            expect(mostLikes(blogs)).toEqual(solution)
-        })
+        expect(mostLikes([])).toBe(undefined);
+    });
+    test('when list has only one blog equals to the author of that blog', () => {
+        expect(mostLikes(listWithOneBlog)).toEqual(solutionOneBlog);
+    });
+    test('of a bigger list is calculated right', () => {
+        expect(mostLikes(blogs)).toEqual(solution);
+    });
 })
