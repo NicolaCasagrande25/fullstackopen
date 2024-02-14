@@ -112,6 +112,54 @@ describe('blogs api test', () => {
 
             expect(titles).not.toContain(blogToDelete.title)
         })
+        test('still returns 204 if the blog does not exist', async () => {
+            const validNonExistingId = await helper.nonExistingId()
+            
+            const blogsAtStart = await helper.blogsInDb()
+
+            await api
+                .delete(`/api/blogs/${validNonExistingId}`)
+                .expect(204)
+            
+            const blogsAtEnd = await helper.blogsInDb()
+
+            expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+        })
+    })
+    describe('updating blogs', () => {
+        test('updating a blog succeeds with code 200 if the blog exists', async () => {
+            const blogs = await helper.blogsInDb()
+            const blogToUpdate = blogs[0]
+
+            const updatedBlog = {
+                title: blogToUpdate.title,
+                author: blogToUpdate.author,
+                url: blogToUpdate.url,
+                likes: blogToUpdate.likes + 1
+            }
+
+            await api
+                .put(`/api/blogs/${blogToUpdate.id}`)
+                .send(updatedBlog)
+                .expect(200)
+
+            const blogsAfterUpdate = await helper.blogsInDb()
+
+            expect(blogsAfterUpdate[0].likes).toBe(blogToUpdate.likes + 1)
+        })
+        test('updating a blog with invalid id returns 400', async () => {
+            const validNonExistingId = await helper.nonExistingId()
+            const blogToUpdate = {
+                title: "Type wars",
+                author: "Robert C. Martin",
+                url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+                likes: 23,
+            }
+            await api
+                .put(`/api/blogs/${validNonExistingId}`)
+                .send(blogToUpdate)
+                .expect(400)
+        })
     })
 })
 
