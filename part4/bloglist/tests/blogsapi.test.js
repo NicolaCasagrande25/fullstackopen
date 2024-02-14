@@ -67,6 +67,30 @@ describe('blogs api test', () => {
         const blogsInDb = await helper.blogsInDb()
         expect(blogsInDb[blogsInDb.length - 1].likes).toBe(0)
     })
+    test('if the title is missing, backend responds with status code 400', async () => {
+        const newBlog = {
+            author: "Robert C. Martin",
+            url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+            likes: 2,
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+    })
+    test('if the url is missing, backend responds with status code 400', async () => {
+        const newBlog = {
+            title: "Type wars",
+            author: "Robert C. Martin",
+            likes: 2,
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+    })
 })
 
 afterAll(() => {
