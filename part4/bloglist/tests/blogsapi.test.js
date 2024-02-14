@@ -53,6 +53,20 @@ describe('blogs api test', () => {
         expect(blogsInDb).toHaveLength(helper.initialBlogs.length + 1)
         expect(titles).toContain('Type wars')
     })
+    test('if the like property is missing in the request, it will default to 0', async () => {
+        const newBlog = {
+            title: "Type wars",
+            author: "Robert C. Martin",
+            url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+        }
+
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+
+        const blogsInDb = await helper.blogsInDb()
+        expect(blogsInDb[blogsInDb.length - 1].likes).toBe(0)
+    })
 })
 
 afterAll(() => {
