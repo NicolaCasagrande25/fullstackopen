@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -8,13 +9,11 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response) => {
-
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'invalid token' })
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
+  const user = request.user
+  if(!user) {
+    return response.status(401).json({ error: 'token is missing or invalid' })
   }
-  const user = await User.findById(decodedToken.id)
 
   const blog = new Blog(request.body)
 
@@ -32,19 +31,18 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
   const blogToDelete = await Blog.findById(request.params.id)
-  if(!request.token) {
-    return response.status(401).json({ error: 'cannot delete a blog without a valid token' })
+  const user = request.user
+
+  if (!user) {
+    return response.status(401).json({ error: 'token is missing or invalid' })
   }
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'invalid token' })
-  }
-  if (blogToDelete.creator.toString() !== decodedToken.id.toString()) {
+
+  if (blogToDelete.creator.toString() !== user._id.toString()) {
     return response.status(401).json({ error: 'cannot delete a blog that you did not create' })
   }
-  
+
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
