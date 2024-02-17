@@ -38,6 +38,10 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
   if (!user) {
     return response.status(401).json({ error: 'token is missing or invalid' })
   }
+  
+  if(!blogToDelete) {
+    return response.status(404).json({ error: 'blog not found' })
+  } 
 
   if (blogToDelete.creator.toString() !== user._id.toString()) {
     return response.status(401).json({ error: 'cannot delete a blog that you did not create' })

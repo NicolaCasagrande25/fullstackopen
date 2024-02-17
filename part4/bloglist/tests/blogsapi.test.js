@@ -4,8 +4,27 @@ const helper = require('./test_helper')
 const app = require('../app')
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const api = supertest(app)
+
+let validToken;
+
+beforeAll(async () => {
+    await User.deleteMany({})
+
+    const newUser = {
+        username: "root",
+        password: "password"
+    }
+
+    await api
+        .post('/api/users')
+        .send(newUser)
+
+    const loginResponse = await api.post('/api/login').send({username: "root", password: "password"})
+    validToken = loginResponse.body.token
+})
 
 beforeEach(async () => {
     await Blog.deleteMany({})
@@ -45,6 +64,7 @@ describe('blogs api test', () => {
 
             await api
                 .post('/api/blogs')
+                .set('Authorization', `Bearer ${validToken}`)
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
@@ -65,6 +85,7 @@ describe('blogs api test', () => {
 
             await api
                 .post('/api/blogs')
+                .set('Authorization', `Bearer ${validToken}`)
                 .send(newBlog)
 
             const blogsInDb = await helper.blogsInDb()
@@ -79,6 +100,7 @@ describe('blogs api test', () => {
 
             await api
                 .post('/api/blogs')
+                .set('Authorization', `Bearer ${validToken}`)
                 .send(newBlog)
                 .expect(400)
         })
@@ -91,36 +113,65 @@ describe('blogs api test', () => {
 
             await api
                 .post('/api/blogs')
+                .set('Authorization', `Bearer ${validToken}`)
                 .send(newBlog)
                 .expect(400)
         })
+        test('if the token is missing, backend responds with status code 401', async () => {
+            const newBlog = {
+                title: "Type wars",
+                author: "Robert C. Martin",
+                url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+                likes: 2,
+            }
+
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(401)
+        })
     })
     describe('deleting blogs', () => {
+        beforeEach(async () => {
+            const newBlog = {
+                title: "Type wars",
+                author: "Robert C. Martin",
+                url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+                likes: 2,
+            }
+
+            await api
+                .post('/api/blogs')
+                .set('Authorization', `Bearer ${validToken}`)
+                .send(newBlog)
+        })
         test('deleting blogs succeeds with code 204 if the blog exists', async () => {
             const blogsAtStart = await helper.blogsInDb()
-            const blogToDelete = blogsAtStart[0]
+            const blogToDelete = blogsAtStart[blogsAtStart.length - 1]
 
             await api
                 .delete(`/api/blogs/${blogToDelete.id}`)
+                .set('Authorization', `Bearer ${validToken}`)
                 .expect(204)
 
             const blogsAtEnd = await helper.blogsInDb()
 
-            expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+            expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
 
             const titles = blogsAtEnd.map(b => b.title)
 
             expect(titles).not.toContain(blogToDelete.title)
         })
-        test('still returns 204 if the blog does not exist', async () => {
+        test('returns 404 if the blog does not exist', async () => {
             const validNonExistingId = await helper.nonExistingId()
-            
+
             const blogsAtStart = await helper.blogsInDb()
 
             await api
                 .delete(`/api/blogs/${validNonExistingId}`)
-                .expect(204)
-            
+                .set('Authorization', `Bearer ${validToken}`)
+                .expect(404)
+
             const blogsAtEnd = await helper.blogsInDb()
 
             expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
