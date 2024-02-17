@@ -163,6 +163,7 @@ describe('blogs api test', () => {
     })
 })
 
-afterAll(() => {
+afterAll(async () => {
+    await Blog.deleteMany({})
     mongoose.connection.close()
 })
