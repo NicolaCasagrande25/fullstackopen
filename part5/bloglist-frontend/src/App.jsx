@@ -31,7 +31,6 @@ const App = () => {
   const createBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
     blogService.create(blogObject).then((returnedBlog) => {
-      console.log(returnedBlog);
       setBlogs(blogs.concat(returnedBlog));
       setMessage(
         `a new blog ${blogObject.title} by ${blogObject.author} added`
@@ -54,6 +53,16 @@ const App = () => {
         blogs.map((b) => (b.id !== returnedBlog.id ? b : returnedBlog))
       );
     });
+  };
+
+  const removeBlog = (blog) => {
+    blogService.deleteBlog(blog.id).then(() => {
+      setBlogs(blogs.filter((b) => b.id !== blog.id));
+    });
+    setMessage(`blog ${blog.title} by ${blog.author} was succesfully removed`);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
   };
 
   blogs.sort((a, b) => b.likes - a.likes);
@@ -80,7 +89,7 @@ const App = () => {
         <CreateBlog createBlog={createBlog} />
       </Togglable>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+        <Blog key={blog.id} blog={blog} user={user} likeBlog={likeBlog} removeBlog={removeBlog} />
       ))}
     </div>
   );
