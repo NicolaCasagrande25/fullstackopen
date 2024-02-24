@@ -31,7 +31,17 @@ const App = () => {
   const createBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
     blogService.create(blogObject).then((returnedBlog) => {
-      setBlogs(blogs.concat(returnedBlog));
+      const userId = returnedBlog.creator;
+      const newBlogWithCreator = {
+        ...returnedBlog,
+        creator: {
+          username: user.username,
+          name: user.name,
+          id: userId,
+        },
+      };
+      console.log(newBlogWithCreator);
+      setBlogs(blogs.concat(newBlogWithCreator));
       setMessage(
         `a new blog ${blogObject.title} by ${blogObject.author} added`
       );
@@ -60,7 +70,7 @@ const App = () => {
       <Notification message={message} isError={isError} />
       <LoggedInInfo user={user} setUser={setUser} setMessage={setMessage} />
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <CreateBlog createBlog={createBlog}/>
+        <CreateBlog createBlog={createBlog} />
       </Togglable>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
