@@ -40,7 +40,6 @@ const App = () => {
           id: userId,
         },
       };
-      console.log(newBlogWithCreator);
       setBlogs(blogs.concat(newBlogWithCreator));
       setMessage(
         `a new blog ${blogObject.title} by ${blogObject.author} added`
@@ -51,6 +50,19 @@ const App = () => {
     });
   };
 
+  const likeBlog = (blog) => {
+    const updatedBlog = {
+      ...blog,
+      creator: blog.creator.id,
+      likes: blog.likes + 1,
+    };
+    delete updatedBlog.id;
+    blogService.update(blog.id, updatedBlog).then((returnedBlog) => {
+      setBlogs(
+        blogs.map((b) => (b.id !== returnedBlog.id ? b : returnedBlog))
+      );
+    });
+  };
   if (user === null) {
     return (
       <div>
@@ -73,7 +85,7 @@ const App = () => {
         <CreateBlog createBlog={createBlog} />
       </Togglable>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
       ))}
     </div>
   );

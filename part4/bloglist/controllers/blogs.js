@@ -1,8 +1,8 @@
 const blogsRouter = require('express').Router()
-const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const mongoose = require('mongoose')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('creator', { username: 1, name: 1 })
@@ -53,15 +53,16 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
 
 blogsRouter.put('/:id', async (request, response) => {
   const body = request.body
-
+ 
   const blog = {
     title: body.title,
     author: body.author,
+    creator: body.creator,
     url: body.url,
     likes: body.likes
   }
-
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+  console.log(blog)
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true }).populate('creator', { username: 1, name: 1, id: 1 })
   if (updatedBlog) {
     response.json(updatedBlog)
   } else {
