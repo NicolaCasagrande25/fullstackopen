@@ -31,16 +31,8 @@ const App = () => {
   const createBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
     blogService.create(blogObject).then((returnedBlog) => {
-      const userId = returnedBlog.creator;
-      const newBlogWithCreator = {
-        ...returnedBlog,
-        creator: {
-          username: user.username,
-          name: user.name,
-          id: userId,
-        },
-      };
-      setBlogs(blogs.concat(newBlogWithCreator));
+      console.log(returnedBlog);
+      setBlogs(blogs.concat(returnedBlog));
       setMessage(
         `a new blog ${blogObject.title} by ${blogObject.author} added`
       );
@@ -63,6 +55,9 @@ const App = () => {
       );
     });
   };
+
+  blogs.sort((a, b) => b.likes - a.likes);
+
   if (user === null) {
     return (
       <div>
