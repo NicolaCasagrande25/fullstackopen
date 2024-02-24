@@ -1,7 +1,11 @@
-const LoggedInInfo = ({ user, setUser }) => {
+const LoggedInInfo = ({ user, setUser, setMessage }) => {
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
+    setMessage(`${user.name} logged out successfully`);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
   };
   return (
     <div>

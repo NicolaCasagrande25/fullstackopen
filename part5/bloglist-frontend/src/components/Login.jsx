@@ -2,7 +2,7 @@ import { useState } from "react";
 import loginService from "../services/login";
 import blogService from "../services/blogs";
 
-const Login = ({ setUser }) => {
+const Login = ({ setUser, setMessage, setIsError }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const handleLogin = async (event) => {
@@ -12,15 +12,23 @@ const Login = ({ setUser }) => {
       blogService.setToken(user.token);
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       setUser(user);
+      setMessage(`${user.name} logged in successfully`);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
       setUsername("");
       setPassword("");
     } catch (exception) {
-      console.log("Wrong credentials");
+      setIsError(true);
+      setMessage("wrong username or password");
+      setTimeout(() => {
+        setMessage(null);
+        setIsError(false);
+      }, 5000);
     }
   };
   return (
     <div>
-      <h2>Log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
           username

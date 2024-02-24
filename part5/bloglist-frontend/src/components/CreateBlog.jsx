@@ -1,7 +1,7 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const CreateBlog = ({ blogs, setBlogs }) => {
+const CreateBlog = ({ blogs, setBlogs, setMessage, setIsError }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -10,12 +10,21 @@ const CreateBlog = ({ blogs, setBlogs }) => {
     event.preventDefault();
     try {
       const newBlog = await blogService.create({ title, author, url });
-      setBlogs([...blogs, newBlog])
+      setMessage(`a new blog ${title} by ${author} added`);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+      setBlogs([...blogs, newBlog]);
       setTitle("");
       setAuthor("");
       setUrl("");
     } catch (exception) {
-      console.log("Error creating blog");
+      setIsError(true);
+      setMessage(`The new blog was not added due to an error`);
+      setTimeout(() => {
+        setMessage(null);
+        setIsError(false);
+      }, 5000);
     }
   };
 
