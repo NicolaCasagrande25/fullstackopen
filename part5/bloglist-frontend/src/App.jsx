@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import Login from "./components/Login";
 import LoggedInInfo from "./components/LoggedInInfo";
 import CreateBlog from "./components/CreateBlog";
 import Notification from "./components/Notification";
+import Togglable from "./components/togglable";
 import blogService from "./services/blogs";
 
 const App = () => {
@@ -11,6 +12,8 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null);
   const [isError, setIsError] = useState(false);
+
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -24,6 +27,19 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
+
+  const createBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility();
+    blogService.create(blogObject).then((returnedBlog) => {
+      setBlogs(blogs.concat(returnedBlog));
+      setMessage(
+        `a new blog ${blogObject.title} by ${blogObject.author} added`
+      );
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+    });
+  };
 
   if (user === null) {
     return (
@@ -43,12 +59,9 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={message} isError={isError} />
       <LoggedInInfo user={user} setUser={setUser} setMessage={setMessage} />
-      <CreateBlog
-        blogs={blogs}
-        setBlogs={setBlogs}
-        setMessage={setMessage}
-        setIsError={setIsError}
-      />
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <CreateBlog createBlog={createBlog}/>
+      </Togglable>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
