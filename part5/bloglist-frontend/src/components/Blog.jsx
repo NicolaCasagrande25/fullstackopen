@@ -1,30 +1,39 @@
-import { useState } from "react";
+import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, user, likeBlog, removeBlog }) => {
-  const [showDetails, setShowDetails] = useState(false);
 
-  const hideWhenVisible = { display: showDetails ? "none" : "" };
-  const showWhenVisible = { display: showDetails ? "" : "none" };
+  Blog.propTypes = {
+    blog: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    likeBlog: PropTypes.func.isRequired,
+    removeBlog: PropTypes.func.isRequired,
+  }
+
+  const [showDetails, setShowDetails] = useState(false)
+
+  const hideWhenVisible = { display: showDetails ? 'none' : '' }
+  const showWhenVisible = { display: showDetails ? '' : 'none' }
 
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: "solid",
+    border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
-  };
+  }
 
   const removeButtonStyle = {
-    backgroundColor: "#FF3838",
-    color: "white",
-    border: "none",
-    padding: "5px",
-    borderRadius: "5px",
-  };
+    backgroundColor: '#FF3838',
+    color: 'white',
+    border: 'none',
+    padding: '5px',
+    borderRadius: '5px',
+  }
 
   const confirmBlogRemoval = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      removeBlog(blog);
+      removeBlog(blog)
     }
   }
 
@@ -43,7 +52,7 @@ const Blog = ({ blog, user, likeBlog, removeBlog }) => {
           likes {blog.likes}
           <button
             onClick={() => {
-              likeBlog(blog);
+              likeBlog(blog)
             }}
           >
             like
@@ -53,7 +62,7 @@ const Blog = ({ blog, user, likeBlog, removeBlog }) => {
         {blog.creator.username === user.username && <button onClick={confirmBlogRemoval} style={removeButtonStyle}>remove</button>}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Blog;
+export default Blog

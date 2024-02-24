@@ -1,32 +1,32 @@
-import { useState } from "react";
-import loginService from "../services/login";
-import blogService from "../services/blogs";
+import { useState } from 'react'
+import loginService from '../services/login'
+import blogService from '../services/blogs'
 
 const Login = ({ setUser, setMessage, setIsError }) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const handleLogin = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
     try {
-      const user = await loginService.login({ username, password });
-      blogService.setToken(user.token);
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      setUser(user);
-      setMessage(`${user.name} logged in successfully`);
+      const user = await loginService.login({ username, password })
+      blogService.setToken(user.token)
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+      setUser(user)
+      setMessage(`${user.name} logged in successfully`)
       setTimeout(() => {
-        setMessage(null);
-      }, 5000);
-      setUsername("");
-      setPassword("");
+        setMessage(null)
+      }, 5000)
+      setUsername('')
+      setPassword('')
     } catch (exception) {
-      setIsError(true);
-      setMessage("wrong username or password");
+      setIsError(true)
+      setMessage('wrong username or password')
       setTimeout(() => {
-        setMessage(null);
-        setIsError(false);
-      }, 5000);
+        setMessage(null)
+        setIsError(false)
+      }, 5000)
     }
-  };
+  }
   return (
     <div>
       <form onSubmit={handleLogin}>
@@ -51,7 +51,7 @@ const Login = ({ setUser, setMessage, setIsError }) => {
         <button type="submit">login</button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login
