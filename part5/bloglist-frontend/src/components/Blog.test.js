@@ -1,6 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
@@ -23,14 +23,14 @@ describe('<Blog />', () => {
     token: 'cjwibefu9234fu32odo1jnfco1ejn2i3uf1h82u1fbe1'
   }
 
-  const likeBlog = jest.fn()
-  const removeBlog = jest.fn()
+  const mockLikeBlog = jest.fn()
+  const mockRemoveBlog = jest.fn()
 
   let container
 
   beforeEach(() => {
     container = render(
-      <Blog blog={blog} user={user} likeBlog={likeBlog} removeBlog={removeBlog}/>
+      <Blog blog={blog} user={user} likeBlog={mockLikeBlog} removeBlog={mockRemoveBlog}/>
     ).container
   })
 
@@ -50,5 +50,16 @@ describe('<Blog />', () => {
     expect(urlAndLikesDiv).toHaveTextContent('www.myfirstblog.com')
     expect(urlAndLikesDiv).toHaveTextContent('likes 5')
     expect(urlAndLikesDiv).toHaveStyle('display: none')
+  })
+
+  test('blog renders url and likes when the view button is clicked', async () => {
+    const user = userEvent.setup()
+    const blogDiv = container.querySelector('.blog')
+    const urlAndLikesDiv = blogDiv.querySelector('.url-likes-div')
+
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
+
+    expect(urlAndLikesDiv).not.toHaveStyle('display: none')
   })
 })
