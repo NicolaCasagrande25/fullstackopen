@@ -1,13 +1,13 @@
 describe('Blog app', function() {
   beforeEach(function() {
-    cy.request('POST', 'http://localhost:3003/api/testing/reset')
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
     const user = {
       name: 'Mario Rossi',
       username: 'mariorossi',
       password: 'password'
     }
-    cy.request('POST', 'http://localhost:3003/api/users/', user)
-    cy.visit('http://localhost:5173')
+    cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+    cy.visit('')
   })
 
   it('Login form is shown', function() {
@@ -38,6 +38,21 @@ describe('Blog app', function() {
       cy.get('html').should('not.contain', 'Mario Rossi logged in')
       cy.get('.error').contains('wrong username or password')
       cy.get('.error').should('have.css', 'color', 'rgb(255, 0, 0)')
+    })
+  })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'mariorossi', password: 'password' })
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('new blog').click()
+      cy.get('#title').type('A new blog')
+      cy.get('#author').type('Mario Rossi')
+      cy.get('#url').type('www.newblog.com')
+      cy.get('#create-button').click()
+      cy.contains('A new blog Mario Rossi')
     })
   })
 })
