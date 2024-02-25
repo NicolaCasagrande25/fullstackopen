@@ -31,24 +31,26 @@ const Login = ({ setUser, setMessage, setIsError }) => {
     <div>
       <form onSubmit={handleLogin}>
         <div>
-          username
+          <span>username</span>
           <input
-            type="text"
+            type='text'
             value={username}
-            name="Username"
+            name='Username'
+            id='username'
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
-          password
+          <span>password</span>
           <input
-            type="password"
+            type='password'
             value={password}
-            name="Password"
+            name='Password'
+            id='password'
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <button type='submit' id='login-button'>login</button>
       </form>
     </div>
   )
