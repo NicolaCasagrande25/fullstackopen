@@ -18,3 +18,15 @@ Cypress.Commands.add('createBlog', ({ title, author, url }) => {
   })
   cy.visit('')
 })
+
+Cypress.Commands.add('createBlogWithLikes', ({ title, author, url, likes }) => {
+  cy.request({
+    url: `${Cypress.env('BACKEND')}/blogs`,
+    method: 'POST',
+    body: { title, url, author, likes },
+    headers: {
+      'Authorization': `Bearer ${JSON.parse(localStorage.getItem('loggedBlogappUser')).token}`
+    }
+  })
+  cy.visit('')
+})
