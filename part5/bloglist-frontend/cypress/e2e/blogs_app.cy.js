@@ -41,7 +41,7 @@ describe('Blog app', function() {
     })
   })
 
-  describe.only('When logged in', function() {
+  describe('When logged in', function() {
     beforeEach(function() {
       cy.login({ username: 'mariorossi', password: 'password' })
     })
@@ -67,6 +67,20 @@ describe('Blog app', function() {
       cy.contains('view').click()
       cy.contains('remove').click()
       cy.get('html').should('not.contain', 'A new blog Mario Rossi')
+    })
+
+    it.only('Only the creator can see the remove blog button', function() {
+      cy.createBlog({ title: 'A new blog', url: 'www.newblog.com', author: 'Mario Rossi' })
+      cy.contains('logout').click()
+      const user = {
+        name: 'Luigi Verdi',
+        username: 'luigiverdi',
+        password: 'password'
+      }
+      cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+      cy.login({ username: 'luigiverdi', password: 'password' })
+      cy.contains('view').click()
+      cy.get('.remove').should('not.exist')
     })
   })
 })
