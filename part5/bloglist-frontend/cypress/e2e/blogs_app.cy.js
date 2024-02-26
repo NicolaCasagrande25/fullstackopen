@@ -61,5 +61,12 @@ describe('Blog app', function() {
       cy.contains('like').click()
       cy.contains('likes 1')
     })
+
+    it('A blog can be deleted', function() {
+      cy.createBlog({ title: 'A new blog', url: 'www.newblog.com', author: 'Mario Rossi' })
+      cy.contains('view').click()
+      cy.contains('remove').click()
+      cy.get('html').should('not.contain', 'A new blog Mario Rossi')
+    })
   })
 })
