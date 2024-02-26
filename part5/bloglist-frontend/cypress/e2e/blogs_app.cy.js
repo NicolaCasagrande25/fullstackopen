@@ -41,7 +41,7 @@ describe('Blog app', function() {
     })
   })
 
-  describe('When logged in', function() {
+  describe.only('When logged in', function() {
     beforeEach(function() {
       cy.login({ username: 'mariorossi', password: 'password' })
     })
@@ -53,6 +53,13 @@ describe('Blog app', function() {
       cy.get('#url').type('www.newblog.com')
       cy.get('#create-button').click()
       cy.contains('A new blog Mario Rossi')
+    })
+
+    it('A blog can be liked', function() {
+      cy.createBlog({ title: 'A new blog', url: 'www.newblog.com', author: 'Mario Rossi' })
+      cy.contains('view').click()
+      cy.contains('like').click()
+      cy.contains('likes 1')
     })
   })
 })
