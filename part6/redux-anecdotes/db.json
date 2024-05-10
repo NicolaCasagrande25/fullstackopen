@@ -33,7 +33,7 @@
     {
       "id": "550c",
       "content": "aaaa",
-      "votes": 0
+      "votes": 1
     },
     {
       "id": "99bd",
@@ -53,6 +53,11 @@
     {
       "id": "1b0c",
       "content": "new one",
+      "votes": 0
+    },
+    {
+      "id": "27c1",
+      "content": "aaa",
       "votes": 0
     }
   ]
