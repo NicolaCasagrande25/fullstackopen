@@ -11,7 +11,7 @@ const AnecdoteForm = () => {
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData(["anecdotes"]);
       queryClient.setQueryData(["anecdotes"], [...anecdotes, newAnecdote]);
-      dispatch({ type: "SET_NOTIFICATION", data: `you created '${newAnecdote.content}'` });
+      dispatch({ type: "SET_NOTIFICATION", payload: `you created '${newAnecdote.content}'` });
       setTimeout(() => {
         dispatch({ type: "CLEAR_NOTIFICATION" });
       }, 5000);

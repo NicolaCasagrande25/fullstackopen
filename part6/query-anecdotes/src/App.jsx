@@ -21,7 +21,7 @@ const App = () => {
       const anecdotes = queryClient.getQueryData(["anecdotes"]);
       const updatedAnecdotes = anecdotes.map((anecdote) => anecdote.id === votedAnecdote.id ? votedAnecdote : anecdote);
       queryClient.setQueryData(["anecdotes"], updatedAnecdotes);
-      dispatch({ type: "SET_NOTIFICATION", data: `you voted '${votedAnecdote.content}'` });
+      dispatch({ type: "SET_NOTIFICATION", payload: `you voted '${votedAnecdote.content}'` });
       setTimeout(() => {
         dispatch({ type: "CLEAR_NOTIFICATION" });
       }, 5000);
